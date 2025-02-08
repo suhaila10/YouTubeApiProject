@@ -1,0 +1,257 @@
+﻿@model List<YouTubeApiProject.Models.YouTubeVideoModel>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Video Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: black;
+            margin: 0;
+            padding: 0;
+        }
+
+        .search-container {
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+            .search-container input[type="text"] {
+                width: 60%;
+                padding: 10px;
+                font-size: 16px;
+                border: 1px solid #ddd;
+                border-radius: 20px;
+                outline: none;
+            }
+
+            .search-container button {
+                padding: 10px 20px;
+                font-size: 16px;
+                background-color: #ff0000;
+                color: #fff;
+                border: none;
+                border-radius: 20px;
+                cursor: pointer;
+                margin-left: 10px;
+            }
+
+                .search-container button:hover {
+                    background-color: #cc0000;
+                }
+
+            .search-container select {
+                padding: 10px;
+                margin-top: 10px;
+                font-size: 16px;
+                border: 1px solid #ddd;
+                border-radius: 20px;
+            }
+
+        .video-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            justify-content: center;
+        }
+
+        .video-card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+            .video-card:hover {
+                transform: scale(1.02);
+            }
+
+            .video-card img {
+                width: 100%;
+                height: 180px;
+                object-fit: cover;
+            }
+
+            .video-card h3 {
+                font-size: 16px;
+                margin: 10px;
+                color: #333;
+            }
+
+            .video-card p {
+                font-size: 14px;
+                margin: 10px;
+                color: #666;
+                flex-grow: 1;
+                min-height: 60px;
+                overflow: hidden;
+            }
+
+            .video-card a {
+                text-decoration: none;
+            }
+
+            .video-card button {
+                display: block;
+                width: 100%;
+                padding: 10px;
+                background-color: #ff0000;
+                color: #fff;
+                border: none;
+                cursor: pointer;
+                font-size: 14px;
+            }
+
+                .video-card button:hover {
+                    background-color: #cc0000;
+                }
+
+            .video-card .published-date {
+                font-size: 12px;
+                color: #999;
+                text-align: center;
+                margin-bottom: 10px;
+            }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+            .pagination button {
+                padding: 10px 20px;
+                background-color: #ff0000;
+                color: #fff;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 16px;
+                margin: 5px;
+            }
+
+                .pagination button:hover {
+                    background-color: #cc0000;
+                }
+    </style>
+</head>
+<body>
+    <div class="search-container">
+        <h2 style="color: black;">Search YouTube Videos</h2>
+
+        <form asp-action="Search" method="post">
+            <input type="text" name="query" placeholder="Search for videos..." />
+
+            <!-- Filters -->
+            <select name="uploadDate">
+                <option value="">Any Upload Date</option>
+                <option value="today">Today</option>
+                <option value="this_week">This Week</option>
+                <option value="this_month">This Month</option>
+            </select>
+
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div style="color: red; text-align: center; padding: 10px; background-color: #f8d7da; margin: 20px;">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="video-list">
+            @foreach (var video in Model)
+            {
+                <div class="video-card">
+                    <img src="@video.ThumbnailUrl" alt="@video.Title" />
+                    <h3>@video.Title</h3>
+                    <p>@video.Description</p>
+                    <div class="published-date">
+                        @if (video.PublishedDate.HasValue)
+                        {
+                            <div class="published-date">
+                                Published: @video.PublishedDate.Value.ToString("MMMM dd, yyyy")
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="published-date">Published: Unknown</div>
+                        }
+
+                    </div>
+                    <a href="@video.VideoUrl" target="_blank">
+                        <button type="button">Watch</button>
+                    </a>
+                </div>
+            }
+        </div>
+
+        <div class="pagination justify-content-center">
+            <!-- Previous Button -->
+            @if (ViewData["PrevPageToken"] != null)
+            {
+                <li class="page-item">
+                    <form asp-action="Search" method="post">
+                        <input type="hidden" name="query" value="@ViewData["Query"]" />
+                        <input type="hidden" name="uploadDate" value="@ViewData["UploadDate"]" />
+                        <input type="hidden" name="pageToken" value="@ViewData["PrevPageToken"]" />
+                        <input type="hidden" name="pageNumber" value="@((int)ViewData["PageNumber"] - 1)" />
+                        <button type="submit" class="page-link">&laquo; Previous</button>
+                    </form>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled"><span class="page-link">&laquo; Previous</span></li>
+            }
+
+            <!-- Dynamic Page Numbers -->
+            @for (int i = Math.Max(1, (int)ViewData["PageNumber"] - 2); i <= Math.Min((int)ViewData["TotalPages"], (int)ViewData["PageNumber"] + 2); i++)
+            {
+                <li class="page-item @(i == (int)ViewData["PageNumber"] ? "active" : "")">
+                    <form asp-action="Search" method="post">
+                        <input type="hidden" name="query" value="@ViewData["Query"]" />
+                        <input type="hidden" name="uploadDate" value="@ViewData["UploadDate"]" />
+                        <input type="hidden" name="pageToken" value="@ViewData["NextPageToken"]" />
+                        <input type="hidden" name="pageNumber" value="@i" />
+                        <button type="submit" class="page-link">@i</button>
+                    </form>
+                </li>
+            }
+
+            <!-- Next Button -->
+            @if (ViewData["NextPageToken"] != null)
+            {
+                <li class="page-item">
+                    <form asp-action="Search" method="post">
+                        <input type="hidden" name="query" value="@ViewData["Query"]" />
+                        <input type="hidden" name="uploadDate" value="@ViewData["UploadDate"]" />
+                        <input type="hidden" name="pageToken" value="@ViewData["NextPageToken"]" />
+                        <input type="hidden" name="pageNumber" value="@((int)ViewData["PageNumber"] + 1)" />
+                        <button type="submit" class="page-link">Next &raquo;</button>
+                    </form>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled"><span class="page-link">Next &raquo;</span></li>
+            }
+        </div>
+    }
+</body>
+</html>

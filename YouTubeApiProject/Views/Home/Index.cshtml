@@ -1,0 +1,94 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="container text-center">
+    <!-- Heading -->
+    <h1>Welcome to YouTube Video Search</h1>
+    <p class="description">Search and watch YouTube videos instantly!</p>
+
+    <!-- About Section -->
+    <div class="about-section">
+        <h2>About This Website</h2>
+        <p>With our website, you can easily search for and watch your favorite YouTube videos. It's simple and fast!</p>
+    </div>
+
+    <!-- Call to Action Section -->
+    <div class="cta-section">
+        <h2>Find Your Favorite Videos Now!</h2>
+        <p>Click below to start searching for videos.</p>
+        
+        <!-- Form to Start Search -->
+        <form asp-controller="YouTube" asp-action="Index">
+            <button class="cta-button" type="submit">Start Searching</button>
+        </form>
+    </div>
+</div>
+
+<!-- Simple Styling -->
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: black;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+    }
+
+    .container {
+        margin: 0 auto;
+        padding: 40px;
+        max-width: 800px;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+        color: white;
+    }
+
+    h2 {
+        font-size: 2rem;
+        color: #333;
+        margin-top: 20px;
+    }
+
+    p {
+        font-size: 1.2rem;
+        color: #555;
+    }
+
+    .description {
+        color: #fff;
+    }
+
+    .about-section {
+        background-color: #fff;
+        padding: 20px;
+        margin-top: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .cta-section {
+        background-color: #ff4500;
+        color: white;
+        padding: 20px;
+        margin-top: 30px;
+        border-radius: 10px;
+    }
+
+    .cta-button {
+        background-color: #fff;
+        color: #ff4500;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1.2rem;
+    }
+
+    .cta-button:hover {
+        background-color: #ff3300;
+        color: white;
+    }
+</style>
