@@ -67,7 +67,8 @@ namespace YouTubeApiProject.Services
                     Description = item.Snippet.Description,
                     ThumbnailUrl = item.Snippet.Thumbnails.Medium.Url,
                     VideoUrl = "https://www.youtube.com/watch?v=" + item.Id.VideoId,
-                    PublishedDate = item.Snippet.PublishedAt?.ToUniversalTime()
+                    PublishedDate = item.Snippet.PublishedAt?.ToUniversalTime(),
+                    ChannelName = item.Snippet.ChannelTitle
                 }).ToList();
 
                 return videos;
