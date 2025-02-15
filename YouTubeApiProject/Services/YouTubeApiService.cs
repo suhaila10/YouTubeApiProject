@@ -90,7 +90,7 @@ namespace YouTubeApiProject.Services
             var request = youtubeService.Videos.List("snippet");
             request.Chart = VideosResource.ListRequest.ChartEnum.MostPopular;
             request.MaxResults = 10;
-            request.RegionCode = "US";
+            request.RegionCode = "MY";
 
             var response = await request.ExecuteAsync();
 
@@ -116,7 +116,7 @@ namespace YouTubeApiProject.Services
             request.Chart = VideosResource.ListRequest.ChartEnum.MostPopular;
             request.VideoCategoryId = "10"; // Music Category
             request.MaxResults = 10;
-            request.RegionCode = "US";
+            request.RegionCode = "MY";
 
             var response = await request.ExecuteAsync();
 
@@ -129,6 +129,5 @@ namespace YouTubeApiProject.Services
 
             return musicVideos;
         }
-
     }
 }
