@@ -1,4 +1,4 @@
-﻿using Google.Apis.Services;
+using Google.Apis.Services;
 using Google.Apis.YouTube.v3;
 using Google.Apis.YouTube.v3.Data;
 using YouTubeApiProject.Models;
@@ -8,6 +8,7 @@ namespace YouTubeApiProject.Services
     public class YouTubeApiService
     {
         private readonly string _apiKey;
+        private readonly YouTubeService _youtubeService;
 
         public string NextPageToken { get; private set; }
         public string PrevPageToken { get; private set; }
@@ -78,5 +79,56 @@ namespace YouTubeApiProject.Services
                 throw new Exception("Error fetching YouTube data", ex);
             }
         }
+        public async Task<List<YouTubeVideoModel>> GetTrendingVideosAsync()
+        {
+            var youtubeService = new YouTubeService(new BaseClientService.Initializer()
+            {
+                ApiKey = _apiKey,
+                ApplicationName = "YoutubeProject"
+            });
+
+            var request = youtubeService.Videos.List("snippet");
+            request.Chart = VideosResource.ListRequest.ChartEnum.MostPopular;
+            request.MaxResults = 10;
+            request.RegionCode = "US";
+
+            var response = await request.ExecuteAsync();
+
+            var videos = response.Items.Select(item => new YouTubeVideoModel
+            {
+                Title = item.Snippet.Title,
+                ThumbnailUrl = item.Snippet.Thumbnails.High.Url,
+                VideoUrl = $"https://www.youtube.com/watch?v={item.Id}"
+            }).ToList();
+
+            return videos;
+        }
+
+        public async Task<List<YouTubeVideoModel>> GetTrendingMusicAsync()
+        {
+            var youtubeService = new YouTubeService(new BaseClientService.Initializer()
+            {
+                ApiKey = _apiKey,
+                ApplicationName = "YoutubeProject"
+            });
+
+            var request = youtubeService.Videos.List("snippet");
+            request.Chart = VideosResource.ListRequest.ChartEnum.MostPopular;
+            request.VideoCategoryId = "10"; // Music Category
+            request.MaxResults = 10;
+            request.RegionCode = "US";
+
+            var response = await request.ExecuteAsync();
+
+            var musicVideos = response.Items.Select(item => new YouTubeVideoModel
+            {
+                Title = item.Snippet.Title,
+                ThumbnailUrl = item.Snippet.Thumbnails.High.Url,
+                VideoUrl = $"https://www.youtube.com/watch?v={item.Id}"
+            }).ToList();
+
+            return musicVideos;
+        }
+
     }
 }
