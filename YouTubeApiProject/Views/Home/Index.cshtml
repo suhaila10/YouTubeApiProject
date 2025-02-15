@@ -1,94 +1,185 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+@model Tuple<List<YouTubeApiProject.Models.YouTubeVideoModel>, List<YouTubeApiProject.Models.YouTubeVideoModel>>
 
-<div class="container text-center">
-    <!-- Heading -->
-    <h1>Welcome to YouTube Video Search</h1>
-    <p class="description">Search and watch YouTube videos instantly!</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Trending Videos and Music</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background-color: black;
+			margin: 0;
+			padding: 0;
+		}
 
-    <!-- About Section -->
-    <div class="about-section">
-        <h2>About This Website</h2>
-        <p>With our website, you can easily search for and watch your favorite YouTube videos. It's simple and fast!</p>
-    </div>
+		.container.text-center {
+			text-align: center;
+			padding: 60px 20px;
+			background-color: #ffffff;
+			color: #333;
+			border-radius: 12px;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+			margin: 50px auto;
+			max-width: 800px;
+			transition: transform 0.3s ease, box-shadow 0.3s ease;
+		}
 
-    <!-- Call to Action Section -->
-    <div class="cta-section">
-        <h2>Find Your Favorite Videos Now!</h2>
-        <p>Click below to start searching for videos.</p>
-        
-        <!-- Form to Start Search -->
-        <form asp-controller="YouTube" asp-action="Index">
-            <button class="cta-button" type="submit">Start Searching</button>
-        </form>
-    </div>
-</div>
+			.container.text-center:hover {
+				transform: translateY(-5px);
+				box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+			}
 
-<!-- Simple Styling -->
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: black;
-        margin: 0;
-        padding: 0;
-        text-align: center;
-    }
+			.container.text-center h1 {
+				font-size: 2.5rem;
+				font-weight: 600;
+				margin-bottom: 15px;
+				color: #222;
+			}
 
-    .container {
-        margin: 0 auto;
-        padding: 40px;
-        max-width: 800px;
-    }
+			.container.text-center .description {
+				font-size: 1.1rem;
+				color: #666;
+				margin-bottom: 30px;
+			}
 
-    h1 {
-        font-size: 2.5rem;
-        color: white;
-    }
+		.about-section {
+			background-color: #f9f9f9;
+			color: #555;
+			padding: 25px;
+			border-radius: 10px;
+			max-width: 700px;
+			margin: 0 auto;
+			margin-top: 30px;
+			border: 1px solid #e0e0e0;
+		}
 
-    h2 {
-        font-size: 2rem;
-        color: #333;
-        margin-top: 20px;
-    }
+			.about-section h2 {
+				font-size: 1.8rem;
+				font-weight: 600;
+				margin-bottom: 10px;
+				color: #444;
+			}
 
-    p {
-        font-size: 1.2rem;
-        color: #555;
-    }
+			.about-section p {
+				line-height: 1.6;
+				color: #777;
+				font-size: 1rem;
+			}
 
-    .description {
-        color: #fff;
-    }
+		h1 {
+			font-size: 2.5rem;
+			color: white;
+		}
 
-    .about-section {
-        background-color: #fff;
-        padding: 20px;
-        margin-top: 30px;
-        border-radius: 10px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
+		h2 {
+			text-align: center;
+			color: white;
+			margin-top: 20px;
+		}
 
-    .cta-section {
-        background-color: #ff4500;
-        color: white;
-        padding: 20px;
-        margin-top: 30px;
-        border-radius: 10px;
-    }
+		p {
+			font-size: 1.2rem;
+			color: #555;
+		}
 
-    .cta-button {
-        background-color: #fff;
-        color: #ff4500;
-        padding: 15px 30px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 1.2rem;
-    }
 
-    .cta-button:hover {
-        background-color: #ff3300;
-        color: white;
-    }
-</style>
+		.video-list {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+			gap: 20px;
+			padding: 20px;
+			justify-content: center;
+		}
+
+		.video-card {
+			background-color: #fff;
+			border-radius: 8px;
+			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+			overflow: hidden;
+			transition: transform 0.2s;
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			height: 100%;
+		}
+
+			.video-card:hover {
+				transform: scale(1.02);
+			}
+
+			.video-card img {
+				width: 100%;
+				height: 180px;
+				object-fit: cover;
+			}
+
+			.video-card h3 {
+				font-size: 16px;
+				margin: 10px;
+				color: #333;
+			}
+
+			.video-card a {
+				text-decoration: none;
+			}
+
+			.video-card button {
+				display: block;
+				width: 100%;
+				padding: 10px;
+				background-color: #ff0000;
+				color: #fff;
+				border: none;
+				cursor: pointer;
+				font-size: 14px;
+			}
+
+				.video-card button:hover {
+					background-color: #cc0000;
+				}
+	</style>
+</head>
+<body>
+	<div class="container text-center">
+		<!-- Heading -->
+		<h1>Welcome to YouTube Video Search</h1>
+		<p class="description">Search and watch YouTube videos instantly!</p>
+
+		<!-- About Section -->
+		<div class="about-section">
+			<h2>About This Website</h2>
+			<p>With our website, you can easily search for and watch your favorite YouTube videos. It's simple and fast!</p>
+		</div>
+	</div>
+
+	<h2>Trending Videos</h2>
+	<div class="video-list">
+		@foreach (var video in Model.Item1)
+		{
+			<div class="video-card">
+				<img src="@video.ThumbnailUrl" alt="@video.Title" />
+				<h3>@video.Title</h3>
+				<a href="@video.VideoUrl" target="_blank">
+					<button type="button">Watch</button>
+				</a>
+			</div>
+		}
+	</div>
+
+	<h2>Trending Music</h2>
+	<div class="video-list">
+		@foreach (var song in Model.Item2)
+		{
+			<div class="video-card">
+				<img src="@song.ThumbnailUrl" alt="@song.Title" />
+				<h3>@song.Title</h3>
+				<a href="@song.VideoUrl" target="_blank">
+					<button type="button">Listen</button>
+				</a>
+			</div>
+		}
+	</div>
+</body>
+</html>
